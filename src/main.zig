@@ -10,7 +10,7 @@ pub fn main() void {
     const screenWidth: u16 = 900;
     const screenHeight: u16 = 500;
 
-    rl.InitWindow(screenWidth,screenHeight, "Tilemap Loading");
+    rl.InitWindow(screenWidth,screenHeight, "Cube Jumper Game");
     rl.SetTargetFPS(60);
     rl.SetExitKey(.KEY_NULL);
 
