@@ -89,7 +89,7 @@ pub const player = struct {
         }
         return fallbackRect;
     }
-    pub fn update(self: *player, obstacles: *map, state: *u8) void {
+    pub fn update(self: *player, obstacles: *map, state: *main.gameState) void {
         input(self);
         move(self, obstacles, state);
     }
@@ -112,7 +112,7 @@ pub const player = struct {
         }
     }
 
-    fn move(self: *player, obstacles: *map, state: *u8) void {
+    fn move(self: *player, obstacles: *map, state: *main.gameState) void {
         var lastCol = self.colCheck(obstacles, 0, self.gravity);
         if (doesCollide(lastCol.type)) {
             self.grounded = true;
@@ -147,13 +147,13 @@ pub const player = struct {
             self.velocity.y = 0;
         }
     }
-    pub fn die(self: *player, state: *u8) void {
-        state.* = 2;
+    pub fn die(self: *player, state: *main.gameState) void {
+        state.* = main.gameState.deathScreen;
         self.velocity.x = 0;
         self.velocity.y = 0;
         self.gravity = 1;
     }
-    fn tileInteract(self: *player, collideType: u8, state: *u8) void {
+    fn tileInteract(self: *player, collideType: u8, state: *main.gameState) void {
         switch (collideType) {
             2 => self.die(state),
             3 => self.jumpHeight = 20,
@@ -168,7 +168,7 @@ pub const player = struct {
             },
             7 => self.gravity = -self.gravity,
             8 => self.airJumped = false,
-            9 => state.* = 4,
+            9 => state.* = main.gameState.levelBeatScreen,
             else => _ = 0,
         }
     }

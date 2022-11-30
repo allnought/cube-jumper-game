@@ -3,6 +3,7 @@ const rl = @import("raylib/raylib.zig");
 const levels = @import("levels.zig");
 const objects = @import("objects.zig");
 const level1 = @import("levels/1.zig");
+const main = @import("main.zig");
 
 pub fn initMap(level: levels.levelData) objects.map {
     var map: [180]objects.tile = undefined;
@@ -50,7 +51,7 @@ pub fn draw(map: objects.map, player: objects.player) void {
     rl.DrawRectangleRec(player.rect, rl.RED);
 }
 
-pub fn bounds(player: *objects.player, map: *objects.map, state: *u8) void {
+pub fn bounds(player: *objects.player, map: *objects.map, state: *main.gameState) void {
     if (player.rect.x > 870) {
         const transitionTo = level1.transition(map.id);
         if (transitionTo[2].id != 255) {
