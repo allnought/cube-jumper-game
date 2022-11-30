@@ -5,7 +5,7 @@ const objects = @import("objects.zig");
 const game = @import("game.zig");
 const level1 = @import("levels/1.zig");
 
-pub const gameState = enum { titleScreen, gameScreen, deathScreen, pauseScreen, levelBeatScreen };
+pub const gameState = enum { titleScreen, gameScreen, deathScreen, pauseScreen, levelBeatScreen, levelSelectScreen };
 
 pub fn main() void {
     const screenWidth: u16 = 900;
@@ -32,10 +32,7 @@ pub fn main() void {
                 exitButton.render();
                 playButton.render();
                 if (playButton.getClicked()) {
-                    level = 1;
-                    map = game.initMap(loadLevel(level));
-                    player = objects.player.init(map.spawnPos.x, map.spawnPos.y);
-                    state = gameState.gameScreen;
+                    state = gameState.levelSelectScreen;
                 }
                 if (exitButton.getClicked()) {
                     exitGame = true;
@@ -125,23 +122,45 @@ pub fn main() void {
                     state = gameState.titleScreen;
                 }
                 if (replayButton.getClicked()) {
-                    map = game.initMap(loadLevel(level));
-                    player = objects.player.init(map.spawnPos.x, map.spawnPos.y);
-                    state = gameState.gameScreen;
+                    loadLevel(level, &map, &player, &state);
                 }
                 if (nextButton.getClicked()) {
                     level += 1;
-                    map = game.initMap(loadLevel(level));
-                    player = objects.player.init(map.spawnPos.x, map.spawnPos.y);
-                    state = gameState.gameScreen;
+                    loadLevel(level, &map, &player, &state);
+                }
+            },
+            gameState.levelSelectScreen => {
+                rl.ClearBackground(rl.RAYWHITE);
+                rl.DrawText("Select Level", screenWidth / 2 - @divTrunc(rl.MeasureText("Select Level", 90), 2), 50, 90, rl.BLACK);
+                var oneButton = objects.button{
+                    .rect = rl.Rectangle{ .x = 25, .y = 200, .width = 145, .height = 145 },
+                    .text = "1",
+                    .fontsize = 50,
+                };
+                var twoButton = objects.button{
+                    .rect = rl.Rectangle{ .x = 195, .y = 200, .width = 145, .height = 145 },
+                    .text = "2",
+                    .fontsize = 50,
+                };
+                oneButton.render();
+                twoButton.render();
+                if (oneButton.getClicked()) {
+                    level = 1;
+                    loadLevel(level, &map, &player, &state);
+                }
+                if (twoButton.getClicked()) {
+                    level = 2;
+                    loadLevel(level, &map, &player, &state);
                 }
             },
         }
     }
 }
-pub fn loadLevel(toLoad: u8) levels.levelData {
-    return (switch (toLoad) {
+pub fn loadLevel(toLoad: u8, map: *objects.map, player: *objects.player, state: *gameState) void {
+    map.* = game.initMap(switch (toLoad) {
         1 => level1.x1y1,
         else => levels.blank,
     });
+    player.* = objects.player.init(map.spawnPos.x, map.spawnPos.y);
+    state.* = gameState.gameScreen;
 }
