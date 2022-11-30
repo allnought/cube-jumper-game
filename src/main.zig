@@ -17,6 +17,7 @@ pub fn main() void {
     var map: objects.map = undefined;
     var player: objects.player = undefined;
     var state: u8 = 0;
+    var level: u8 = undefined;
 
     while (!exitGame and !rl.WindowShouldClose()) {
         rl.BeginDrawing();
@@ -29,7 +30,8 @@ pub fn main() void {
                 exitButton.render();
                 playButton.render();
                 if (playButton.getClicked()) {
-                    map = game.initMap(level1.x1y1);
+                    level = 1;
+                    map = game.initMap(loadLevel(level));
                     player = objects.player.init(map.spawnPos.x, map.spawnPos.y);
                     state = 1;
                 }
@@ -94,7 +96,51 @@ pub fn main() void {
                 }
                 if (rl.IsKeyPressed(.KEY_ESCAPE)) state = 1;
             },
+            4 => {
+                const backGroundBox = rl.Rectangle{ .x = 150, .y = 50, .width = 550, .height = 300 };
+                rl.DrawRectangleRec(backGroundBox, rl.LIGHTGRAY);
+                rl.DrawRectangleLinesEx(backGroundBox, 5, rl.GRAY);
+                rl.DrawText("Level Beat", screenWidth / 2 - @divTrunc(rl.MeasureText("Level Beat", 75), 2), 100, 75, rl.BLACK);
+                var titleButton = objects.button{
+                    .rect = rl.Rectangle{ .x = 175, .y = 200, .width = 150, .height = 100 },
+                    .text = "Title Screen",
+                    .fontsize = 19,
+                };
+                var replayButton = objects.button{
+                    .rect = rl.Rectangle{ .x = 350, .y = 200, .width = 150, .height = 100 },
+                    .text = "Replay Level",
+                    .fontsize = 19,
+                };
+                var nextButton = objects.button{
+                    .rect = rl.Rectangle{ .x = 525, .y = 200, .width = 150, .height = 100 },
+                    .text = "Next Level",
+                    .fontsize = 19,
+                };
+                titleButton.render();
+                replayButton.render();
+                nextButton.render();
+                if (titleButton.getClicked()) {
+                    state = 0;
+                }
+                if (replayButton.getClicked()) {
+                    map = game.initMap(loadLevel(level));
+                    player = objects.player.init(map.spawnPos.x, map.spawnPos.y);
+                    state = 1;
+                }
+                if (nextButton.getClicked()) {
+                    level += 1;
+                    map = game.initMap(loadLevel(level));
+                    player = objects.player.init(map.spawnPos.x, map.spawnPos.y);
+                    state = 1;
+                }
+            },
             else => unreachable,
         }
     }
+}
+pub fn loadLevel(toLoad: u8) levels.levelData {
+    return (switch (toLoad) {
+        1 => level1.x1y1,
+        else => levels.blank,
+    });
 }

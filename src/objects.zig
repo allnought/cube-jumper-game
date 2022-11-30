@@ -168,6 +168,7 @@ pub const player = struct {
             },
             7 => self.gravity = -self.gravity,
             8 => self.airJumped = false,
+            9 => state.* = 4,
             else => _ = 0,
         }
     }
