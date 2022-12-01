@@ -45,6 +45,8 @@ pub fn main() void {
                 game.draw(map, player);
             },
             gameState.deathScreen => {
+                game.draw(map, player);
+                rl.DrawRectangle(0, 0, screenWidth, screenHeight, rl.Fade(rl.BLACK, 0.4));
                 const backGroundBox = rl.Rectangle{ .x = 200, .y = 50, .width = 500, .height = 300 };
                 rl.DrawRectangleRec(backGroundBox, rl.LIGHTGRAY);
                 rl.DrawRectangleLinesEx(backGroundBox, 5, rl.GRAY);
@@ -71,6 +73,8 @@ pub fn main() void {
                 }
             },
             gameState.pauseScreen => {
+                game.draw(map, player);
+                rl.DrawRectangle(0, 0, screenWidth, screenHeight, rl.Fade(rl.BLACK, 0.4));
                 const backGroundBox = rl.Rectangle{ .x = 200, .y = 50, .width = 500, .height = 300 };
                 rl.DrawRectangleRec(backGroundBox, rl.LIGHTGRAY);
                 rl.DrawRectangleLinesEx(backGroundBox, 5, rl.GRAY);
@@ -96,6 +100,8 @@ pub fn main() void {
                 if (rl.IsKeyPressed(.KEY_ESCAPE)) state = gameState.gameScreen;
             },
             gameState.levelBeatScreen => {
+                game.draw(map, player);
+                rl.DrawRectangle(0, 0, screenWidth, screenHeight, rl.Fade(rl.BLACK, 0.4));
                 const backGroundBox = rl.Rectangle{ .x = 150, .y = 50, .width = 550, .height = 300 };
                 rl.DrawRectangleRec(backGroundBox, rl.LIGHTGRAY);
                 rl.DrawRectangleLinesEx(backGroundBox, 5, rl.GRAY);
@@ -130,6 +136,7 @@ pub fn main() void {
                 }
             },
             gameState.levelSelectScreen => {
+                if (rl.IsKeyPressed(.KEY_ESCAPE)) state = gameState.titleScreen;
                 rl.ClearBackground(rl.RAYWHITE);
                 rl.DrawText("Select Level", screenWidth / 2 - @divTrunc(rl.MeasureText("Select Level", 90), 2), 50, 90, rl.BLACK);
                 var oneButton = objects.button{
